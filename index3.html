@@ -1,0 +1,437 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Study Planner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .progress-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background-color: #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 6px;
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .tasks-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .tasks-header {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .task-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 4px solid #667eea;
+        }
+
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+        }
+
+        .task-card.completed {
+            background: #f0f0f0;
+            opacity: 0.8;
+            border-left-color: #6c757d;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .task-card.completed .task-title {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+
+        .task-deadline {
+            font-size: 0.9rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .task-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .task-actions {
+                align-self: flex-end;
+                display: flex;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Smart Study Planner</h1>
+            <p>Organize your tasks and track your progress</p>
+        </header>
+
+        <div class="progress-section">
+            <div class="progress-header">
+                <span>Progress</span>
+                <span id="progress-text">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-group">
+                <label for="task-input">Task/Subject Name</label>
+                <input type="text" id="task-input" placeholder="Enter your task or subject...">
+            </div>
+            <div class="form-group">
+                <label for="deadline-input">Deadline</label>
+                <input type="date" id="deadline-input">
+            </div>
+            <button class="add-btn" id="add-task-btn">Add Task</button>
+        </div>
+
+        <div class="tasks-section">
+            <h2 class="tasks-header">Your Tasks</h2>
+            <div class="task-list" id="task-list">
+                <div class="empty-state" id="empty-state">
+                    <p>No tasks yet. Add your first task to get started!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const taskInput = document.getElementById('task-input');
+        const deadlineInput = document.getElementById('deadline-input');
+        const addTaskBtn = document.getElementById('add-task-btn');
+        const taskList = document.getElementById('task-list');
+        const emptyState = document.getElementById('empty-state');
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        deadlineInput.min = today;
+
+        // Load tasks from localStorage
+        let tasks = JSON.parse(localStorage.getItem('studyTasks')) || [];
+
+        // Initialize the app
+        function init() {
+            renderTasks();
+            updateProgress();
+        }
+
+        // Add new task
+        function addTask() {
+            const title = taskInput.value.trim();
+            const deadline = deadlineInput.value;
+
+            if (!title) {
+                alert('Please enter a task title');
+                return;
+            }
+
+            if (!deadline) {
+                alert('Please select a deadline');
+                return;
+            }
+
+            const newTask = {
+                id: Date.now(),
+                title: title,
+                deadline: deadline,
+                completed: false
+            };
+
+            tasks.push(newTask);
+            saveTasks();
+            renderTasks();
+            updateProgress();
+
+            // Clear form
+            taskInput.value = '';
+            deadlineInput.value = '';
+            taskInput.focus();
+        }
+
+        // Delete task
+        function deleteTask(id) {
+            tasks = tasks.filter(task => task.id !== id);
+            saveTasks();
+            renderTasks();
+            updateProgress();
+        }
+
+        // Toggle task completion
+        function toggleTask(id) {
+            tasks = tasks.map(task => {
+                if (task.id === id) {
+                    return { ...task, completed: !task.completed };
+                }
+                return task;
+            });
+            saveTasks();
+            renderTasks();
+            updateProgress();
+        }
+
+        // Save tasks to localStorage
+        function saveTasks() {
+            localStorage.setItem('studyTasks', JSON.stringify(tasks));
+        }
+
+        // Render tasks to the DOM
+        function renderTasks() {
+            if (tasks.length === 0) {
+                emptyState.style.display = 'block';
+                taskList.innerHTML = '';
+                taskList.appendChild(emptyState);
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            taskList.innerHTML = '';
+
+            tasks.forEach(task => {
+                const taskCard = document.createElement('div');
+                taskCard.className = `task-card ${task.completed ? 'completed' : ''}`;
+                taskCard.innerHTML = `
+                    <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
+                    <div class="task-content">
+                        <div class="task-title">${task.title}</div>
+                        <div class="task-deadline">Deadline: ${formatDate(task.deadline)}</div>
+                    </div>
+                    <button class="delete-btn">×</button>
+                `;
+
+                const checkbox = taskCard.querySelector('.task-checkbox');
+                const deleteBtn = taskCard.querySelector('.delete-btn');
+
+                checkbox.addEventListener('change', () => toggleTask(task.id));
+                deleteBtn.addEventListener('click', () => deleteTask(task.id));
+
+                taskList.appendChild(taskCard);
+            });
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            if (tasks.length === 0) {
+                progressFill.style.width = '0%';
+                progressText.textContent = '0%';
+                return;
+            }
+
+            const completedTasks = tasks.filter(task => task.completed).length;
+            const percentage = Math.round((completedTasks / tasks.length) * 100);
+            
+            progressFill.style.width = `${percentage}%`;
+            progressText.textContent = `${percentage}%`;
+        }
+
+        // Format date for display
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Event Listeners
+        addTaskBtn.addEventListener('click', addTask);
+        taskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addTask();
+            }
+        });
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
